@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>User Profile</title>
+</head>
+<body>
+    <p>User profile picture will be shown here</p>
+    {% if user.image %}
+        <img src="{{ user.image.url }}" alt="Profile Picture" style="max-width:200px;">
+    {% else %}
+        <p>No profile picture uploaded.</p>
+    {% endif %}
+    <form method="post" enctype="multipart/form-data">
+        {% csrf_token %}
+        {{ form.as_p }}
+        <label for="image">Choose a profile picture:</label>
+        <input type="file" name="image" id="image">
+        <button type="submit">Upload</button>
+    </form>
+</body>
+</html>

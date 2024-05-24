@@ -1,0 +1,59 @@
+{% extends 'base.html' %} 
+{% block title %} Profile {% endblock %} 
+{% block content %}
+<h5>Current login user is, {{ request.user.username }}</h5>
+<h2>Profile of: {{user.username}}</h2>
+{% if user.image %}
+<figure class="image">
+  <img src="{{ user.image.url }}"/>
+</figure>
+{% else %}
+<p>No profile picture uploaded yet.</p>
+<br />
+{% endif %}
+
+{% comment %} {{user}} {% endcomment %}
+
+{% if request.user == user %}
+<form method="post" enctype="multipart/form-data">
+  {% csrf_token %}
+  {{ form.as_p }}
+  {% comment %} <label for="image">Choose a profile picture:</label>
+  <input type="file" name="image" id="image">  {% endcomment %}
+  <button type="submit">Upload</button>
+</form>
+{% endif %}
+{% endblock %}
+
+
+
+
+
+
+
+{% comment %} {% extends 'base.html' %} 
+{% block title %}Profile{% endblock %} 
+{% block content %}
+<p>Current login user is, {{request.user.username}}</p>
+<h2>Profile of {{ user.username }}</h2>
+{{user}}
+{% if user.image %}
+<figure class="image">
+  <img src="{{ user.image.url }}" />
+</figure>
+{% else %}
+<p>No profile image uploaded yet.</p>
+<br/>
+{% endif %}
+
+{% if request.user == user %}
+<form method="post" enctype="multipart/form-data">
+  {% csrf_token %}
+  {{ form.as_p }}
+  <label for="image">Choose a profile image:</label>
+  <input type="file" name="image" id="image">
+  <button type="submit">Upload</button>
+</form>
+{% endif %}
+{% endblock %} {% endcomment %}
+

@@ -1,0 +1,178 @@
+{% extends 'base.html' %} 
+{% block title %} Home | {% endblock %}
+{% block content %}
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Comment Section</title>
+    <!-- Add your CSS stylesheets here -->
+    <style>
+      /* Basic styling */
+      body {
+        font-family: Arial, sans-serif;
+        margin: 0;
+        padding: 0;
+      }
+      .container {
+        max-width: 600px;
+        margin: 20px auto;
+        padding: 20px;
+        background-color: #f9f9f9;
+        border-radius: 5px;
+        box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+      }
+      .comment-section {
+        margin-top: 20px;
+        position: relative;
+      }
+      .comment-form {
+        align-items: flex-end;
+        display: flex;
+        gap: 10px;
+      }
+      .comment-input {
+        width: calc(100%);
+        padding: 10px;
+        border: 1px solid #ccc;
+        border-radius: 5px;
+        resize: none;
+      }
+      .send-button {
+        display: flex;
+        padding: 10px;
+        align-items: center;
+        justify-content: center;
+        background-color: #4caf50; /* Green color */
+        color: white;
+        border: none;
+        border-radius: 5px;
+        cursor: pointer;
+      }
+      .send-button:hover {
+        background-color: #45a049; /* Darker green color */
+      }
+      .comment {
+        margin-top: 20px;
+        padding: 10px;
+        background-color: #fff;
+        border: 1px solid #ccc;
+        border-radius: 5px;
+      }
+      .comment-body {
+        margin-bottom: 10px;
+      }
+      .comment-actions {
+        display: flex;
+        justify-content: flex-end;
+      }
+      .comment-action {
+        margin-left: 10px;
+        padding: 5px 10px;
+        border: none;
+        border-radius: 5px;
+        cursor: pointer;
+        transition: background-color 0.3s;
+      }
+      .edit-button {
+        background-color: #007bff;
+        color: #fff;
+      }
+      .edit-button:hover {
+        background-color: #0056b3;
+      }
+      .delete-button {
+        background-color: #dc3545;
+        color: #fff;
+      }
+      .delete-button:hover {
+        background-color: #c82333;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <strong>{{ post.user }}</strong>
+      <h2>{{post.title}}</h2>
+      <p>{{post.slug}}</p>
+      <p>{{post.body}}</p>
+      {% comment %}
+      <p>Posted by: {{post.user.username }}</p>
+      {% endcomment %} {% if post.image %}
+      <figure class="image">
+        <img scr="{{post.image.url}}" />
+      </figure>
+      {% endif %} {% if post.user == user %}
+      <a href="{% url 'delete-post' post.id %}" class="btn btn-danger"
+        >Delete Post</a
+      >
+      <a href="{% url 'update-post' post.id %}" class="btn btn-primary"
+        >Update Post</a
+      >
+      {% endif %}
+      <h2>Comment Section</h2>
+      <!-- Form for adding a comment -->
+      <div class="comment-section">
+        <form
+          method="post"
+          action="{% url 'store-comment' %}"
+          class="comment-form"
+        >
+          {% csrf_token %}
+          <input type="hidden" value="{{post.id}}" name="post_id" />
+          <textarea
+            name="body"
+            placeholder="Write your comment here..."
+            class="comment-input"
+            rows="2"
+            required
+          ></textarea>
+          <button type="submit" class="send-button">
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              width="16"
+              height="16"
+              fill="currentColor"
+              class="bi bi-send"
+              viewBox="0 0 16 16"
+            >
+              <path
+                d="M15.854.146a.5.5 0 0 1 .11.54l-5.819 14.547a.75.75 0 0 1-1.329.124l-3.178-4.995L.643 7.184a.75.75 0 0 1 .124-1.33L15.314.037a.5.5 0 0 1 .54.11ZM6.636 10.07l2.761 4.338L14.13 2.576zm6.787-8.201L1.591 6.602l4.339 2.76z"
+              />
+            </svg>
+          </button>
+        </form>
+      </div>
+      <!-- Display existing comments -->
+      <h3>Comments</h3>
+      {% for comment in comments %}
+      <div class="comment">
+        <div class="comment-author">
+          <strong>{{ comment.user }}</strong>
+          <small>{{comment.created_at | timesince}} ago</small>
+        </div>
+        <div class="comment-body">{{ comment.body }}</div>
+        {% if comment.user == user %}
+        <div class="comment-actions">
+          <button
+            class="comment-action edit-button"
+            data-comment-id="{{ comment.id }}"
+          >
+            Edit
+          </button>
+          <a
+            href="{% url 'delete-comment' comment.id %}"
+            class="comment-action delete-button"
+            data-comment-id="{{ comment.id }}"
+            >Delete</a
+          >
+        </div>
+      </div>
+      {% endif %}
+      {% endfor %}
+    </div>
+    <br><a href="{% url 'posts' %}" class="btn btn-primary">Back to Post</a>
+  </body>
+</html>
+{% endblock %}
